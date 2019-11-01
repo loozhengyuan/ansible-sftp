@@ -1,0 +1,57 @@
+---
+- name: Add empty shell to /etc/shells
+  lineinfile:
+    path: /etc/shells
+    line: /bin/false
+
+- name: Create sftp users with disabled shell
+  user:
+    name: "{{ item }}"
+    shell: /bin/false
+  loop: "{{ sftp_users }}"
+
+# ChrootDirectory
+# Specifies the pathname of a directory to chroot(2) to after authentication. 
+# All components of the pathname must be root-owned directories that are not 
+# writable by any other user or group. After the chroot, sshd(8) changes the 
+# working directory to the user's home directory.
+- name: Ensure /home/USERNAME is owned by root
+  file:
+    path: "/home/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  loop: "{{ sftp_users }}"
+
+- name: Create sftp directory for sftp users
+  file:
+    path: "/home/{{ item }}/sftp"
+    state: directory
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: 0755
+  loop: "{{ sftp_users }}"
+
+- name: Set sftp subsystem to internal-sftp
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^Subsystem\tsftp"
+    line: "Subsystem\tsftp\tinternal-sftp"
+    validate: /usr/sbin/sshd -T -f %s
+    backup: yes
+  notify: sshd_reload
+
+# NOTE: -T flag omitted due to bug that causes validation to fail
+- name: Add users to sshd chroot directive
+  blockinfile:
+    path: /etc/ssh/sshd_config
+    validate: /usr/sbin/sshd -f %s
+    backup: yes
+    block: |
+      Match User {{ sftp_users | join(',') }}
+        ChrootDirectory %h
+        ForceCommand internal-sftp
+        X11Forwarding no
+        AllowTcpForwarding no
+  notify: sshd_reload

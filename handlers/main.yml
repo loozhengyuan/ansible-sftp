@@ -1,0 +1,6 @@
+---
+- name: Restart sshd if config changed
+  service:
+    name: sshd
+    state: reloaded
+  listen: sshd_reload
