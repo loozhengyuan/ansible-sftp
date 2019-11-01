@@ -2,7 +2,7 @@
 - name: Create sftp users with disabled shell
   user:
     name: "{{ item }}"
-    shell: /bin/false
+    shell: /sbin/nologin
   loop: "{{ sftp_users }}"
 
 - name: Ensure /home/USERNAME is owned by root
