@@ -3,6 +3,7 @@
   user:
     name: "{{ item }}"
     shell: /sbin/nologin
+  when: sftp_users | length > 0
   loop: "{{ sftp_users }}"
 
 - name: Ensure /home/USERNAME is owned by root
@@ -12,6 +13,7 @@
     owner: root
     group: root
     mode: 0755
+  when: sftp_users | length > 0
   loop: "{{ sftp_users }}"
 
 - name: Create sftp directory for sftp users
@@ -21,6 +23,7 @@
     owner: root
     group: root
     mode: 0755
+  when: sftp_users | length > 0
   loop: "{{ sftp_users }}"
 
 - name: Create sftp upload directory for sftp users
@@ -30,6 +33,7 @@
     owner: "{{ item }}"
     group: "{{ item }}"
     mode: 0755
+  when: sftp_users | length > 0
   loop: "{{ sftp_users }}"
 
 - name: Set sftp subsystem to internal-sftp
@@ -52,4 +56,5 @@
         ForceCommand internal-sftp
         X11Forwarding no
         AllowTcpForwarding no
+  when: sftp_users | length > 0
   notify: sshd_reload
