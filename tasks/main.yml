@@ -41,11 +41,10 @@
     backup: yes
   notify: sshd_reload
 
-# NOTE: -T flag omitted due to bug that causes validation to fail
 - name: Add users to sshd chroot directive
   blockinfile:
     path: /etc/ssh/sshd_config
-    validate: /usr/sbin/sshd -f %s
+    validate: /usr/sbin/sshd -T -f %s
     backup: yes
     block: |
       Match User {{ sftp_users | join(',') }}
