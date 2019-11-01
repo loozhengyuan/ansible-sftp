@@ -6,7 +6,7 @@
   when: sftp_users | length > 0
   loop: "{{ sftp_users }}"
 
-- name: Ensure /home/USERNAME is owned by root
+- name: Ensure user home directory is owned by root on 755 file permissions
   file:
     path: "/home/{{ item }}"
     state: directory
@@ -16,7 +16,7 @@
   when: sftp_users | length > 0
   loop: "{{ sftp_users }}"
 
-- name: Create sftp directory for sftp users
+- name: Ensure chroot directory is owned by root on 755 file permissions
   file:
     path: "/home/{{ item }}/sftp"
     state: directory
