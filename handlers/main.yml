@@ -1,5 +1,5 @@
 ---
-- name: Restart sshd if config changed
+- name: Reload sshd if config changed
   service:
     name: sshd
     state: reloaded
