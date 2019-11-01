@@ -18,6 +18,15 @@
   file:
     path: "/home/{{ item }}/sftp"
     state: directory
+    owner: root
+    group: root
+    mode: 0755
+  loop: "{{ sftp_users }}"
+
+- name: Create sftp upload directory for sftp users
+  file:
+    path: "/home/{{ item }}/sftp/upload"
+    state: directory
     owner: "{{ item }}"
     group: "{{ item }}"
     mode: 0755
