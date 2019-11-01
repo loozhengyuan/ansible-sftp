@@ -48,7 +48,7 @@
     backup: yes
     block: |
       Match User {{ sftp_users | join(',') }}
-        ChrootDirectory %h
+        ChrootDirectory /home/%u/sftp
         ForceCommand internal-sftp
         X11Forwarding no
         AllowTcpForwarding no
