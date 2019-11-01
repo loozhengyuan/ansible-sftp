@@ -41,14 +41,14 @@
     path: /etc/ssh/sshd_config
     regexp: "^Subsystem\tsftp"
     line: "Subsystem\tsftp\tinternal-sftp"
-    validate: /usr/sbin/sshd -T -f %s
+    validate: /usr/sbin/sshd -T -C user=root -C host=localhost -C addr=localhost -f %s
     backup: yes
   notify: sshd_reload
 
 - name: Add users to sshd chroot directive
   blockinfile:
     path: /etc/ssh/sshd_config
-    validate: /usr/sbin/sshd -T -f %s
+    validate: /usr/sbin/sshd -T -C user=root -C host=localhost -C addr=localhost -f %s
     backup: yes
     block: |
       Match User {{ sftp_users | join(',') }}
