@@ -3,6 +3,8 @@
   user:
     name: "{{ item }}"
     shell: /sbin/nologin
+    password: "{{ item | password_hash('sha512') }}"
+    update_password: on_create
   when: sftp_users | length > 0
   loop: "{{ sftp_users }}"
 
